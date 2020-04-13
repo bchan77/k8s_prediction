@@ -10,10 +10,10 @@ UPLOAD_DIR = "/app/uploads/"
 #app.config['UPLOAD_FOLDER'] = UPLOAD_DIR
 #app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
-@app.route("/prediction")
-def prediction():
-    return "Blah! "
+#pred.py executable location. We expect pred.py <source file> <output_file>
 
+
+@app.route("/prediction", methods=["POST"])
 @app.route("/upload",methods=["POST"])
 def post_file():
     #https://www.roytuts.com/python-flask-rest-api-file-upload/
@@ -40,6 +40,9 @@ def post_file():
     resp.status_code = 200
     return resp
 
+
+def prediction(source_file):
+    return False
 
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0')
