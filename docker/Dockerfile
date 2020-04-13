@@ -1,4 +1,4 @@
-FROM python:3.8
+FROM python:3.8  #Maybe I should try to use python:3.8-alpine 
 
 #Create a list of directory
 RUN mkdir /app

@@ -1,5 +1,6 @@
 from flask import Flask, request,jsonify
 import time
+import subprocess
 import urllib.request
 import os
 
@@ -36,12 +37,19 @@ def post_file():
     file.save(filename)
     app.logger.info("Done with writing the file.")
 
+    app.logger.info("Running Prediction")
+    prediction(filename)
+    app.logger.info("Done running prediction")
+
     resp = jsonify({'message': 'All Good'})
     resp.status_code = 200
     return resp
 
 
 def prediction(source_file):
+    command = "python " + source_file + " final.output"
+    app.logger.info("prediction: " + source_file)
+    app.logger.info(str(os.system(command)))
     return False
 
 if __name__ == "__main__":
