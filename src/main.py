@@ -1,17 +1,20 @@
 from flask import Flask, request,jsonify
 import time
 from datetime import datetime
-import subprocess
-import urllib.request
+import pandas as pd
 import os
+
+
 
 
 app = Flask(__name__)
 
-UPLOAD_DIR = "/app/uploads/"
-#app.config['UPLOAD_FOLDER'] = UPLOAD_DIR
-#app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
-PREDICTION_OUTPUT = "final.output"
+#UPLOAD_DIR = "/app/uploads/"
+#Overwrite it for local testing
+UPLOAD_DIR = "/Users/billy/Downloads/"
+
+PREDICTION_OUTPUT_CSV = "final.output"
+
 
 #pred.py executable location. We expect pred.py <source file> <output_file>
 PRED_EXEC = 'pred.py'
@@ -20,35 +23,57 @@ PRED_EXEC = 'pred.py'
 @app.route("/upload",methods=["POST"])
 def post_file():
     #https://www.roytuts.com/python-flask-rest-api-file-upload/
-    if 'file' not in request.files:
-        resp = jsonify({'message' : 'No File part in the request'})
-        resp.status_code = 400
-        return resp
+    #if 'file' not in request.files:
+    #    resp = jsonify({'message' : 'No File part in the request'})
+    #    resp.status_code = 400
+    #    return resp
 
     app.logger.debug("request: " + str(request))
-    file=request.files['file']
 
-    if file.filename == '':
-        resp = jsonify({'message': 'No file selected for uploading'})
-        resp.status_code = 400
-        return resp
+
+    #if file.filename == '':
+    #    resp = jsonify({'message': 'No file selected for uploading'})
+    #    resp.status_code = 400
+    #    return resp
 
     #Save the file as YYYYMMDD
-    filename = UPLOAD_DIR + time.strftime("%Y%m%d-%H%M%S") + "_" + file.filename
+    #filename = UPLOAD_DIR + time.strftime("%Y%m%d-%H%M%S") + "_" + file.filename
+    filename = UPLOAD_DIR + time.strftime("%Y%m%d-%H%M%S") + "_upload.csv"
+
     app.logger.info("Saving the file to: " + filename)
-    file.save(filename)
+    with open(filename, 'w') as f:
+        f.write(request.get_data(as_text=True))
     app.logger.info("Done with writing the file.")
 
     app.logger.info("Running Prediction")
-    prediction(filename)
+    PREDICTION_OUTPUT_CSV = UPLOAD_DIR + time.strftime("%Y%m%d-%H%M%S") + "_pred.csv"
+    app.logger.info("Prediction Output file: " + PREDICTION_OUTPUT_CSV)
+    prediction(filename,PREDICTION_OUTPUT_CSV)
     app.logger.info("Done running prediction")
 
-    resp = jsonify({'message': 'All Good'})
-    resp.status_code = 200
-    return resp
+    #Coverting CSV output to json
+    app.logger.info("Converting CSV to JSON")
+    df = pd.read_csv(PREDICTION_OUTPUT_CSV)
+    prediction_json = df.to_json()
+    app.logger.info("Done JSON Converting")
 
 
-def prediction(source_file, output_file=PREDICTION_OUTPUT):
+    response = app.response_class(
+        response=prediction_json,
+        status = 200,
+        mimetype='application/json'
+    )
+
+    #Lets do some cleanup
+    #Remove downloaded file
+    os.remove(filename)
+    os.remove(PREDICTION_OUTPUT_CSV)
+
+
+    return response
+
+
+def prediction(source_file, output_file=PREDICTION_OUTPUT_CSV):
     command = "python " + PRED_EXEC + " " + source_file + " " + output_file
     app.logger.info("Running: " + command)
     start_time = datetime.now()
@@ -70,7 +95,6 @@ def prediction(source_file, output_file=PREDICTION_OUTPUT):
         app.logger.info("Number of Rows (including header): " + str(num_lines))
 
     return return_code
-
 
 
 

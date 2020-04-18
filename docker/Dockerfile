@@ -14,6 +14,9 @@ COPY src/* /app/
 #Install Python package
 RUN pip install -r requirements.txt
 
+#declare a variable to tell if this program is running inside of container or k8s
+ENV AM_I_IN_CONTAINER YES
+
 
 EXPOSE 5000
 CMD ["python", "/app/main.py"]
