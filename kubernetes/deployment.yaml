@@ -7,9 +7,9 @@ spec:
     app: k8s_prediction
   ports:
   - protocol: "TCP"
-    port: 6000
-    targetPort: 5000
-  type: LoadBalancer
+    port: 5000
+    targetPort: 6000
+  type: NodePort
 
 ---
 apiVersion: apps/v1
