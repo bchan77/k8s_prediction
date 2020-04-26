@@ -9,9 +9,9 @@ import os
 
 app = Flask(__name__)
 
-#UPLOAD_DIR = "/app/uploads/"
+UPLOAD_DIR = "/app/uploads/"
 #Overwrite it for local testing
-UPLOAD_DIR = "/Users/billy/Downloads/"
+#UPLOAD_DIR = "/Users/billy/Downloads/"
 
 PREDICTION_OUTPUT_CSV = "final.output"
 

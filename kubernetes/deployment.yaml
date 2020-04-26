@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: k8s_prediction_service
+  name: k8s-prediction-service
 spec:
   selector:
-    app: k8s_prediction
+    app: k8s-prediction
   ports:
   - protocol: "TCP"
     port: 5000
@@ -15,20 +15,20 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: k8s_prediction
+  name: k8s-prediction
 spec:
   selector:
     matchLabels:
-      app: k8s_prediction
+      app: k8s-prediction
   replicas: 3
   template:
     metadata:
       labels:
-        app: k8s_prediction
+        app: k8s-prediction
     spec:
       containers:
-      - name: k8s_prediction
-        image: k8s_prediction:latest
+      - name: k8s-prediction
+        image: k8s-prediction:latest
         imagePullPolicy: Never
         ports:
         - containerPort: 5000
