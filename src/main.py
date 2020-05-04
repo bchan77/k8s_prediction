@@ -99,4 +99,4 @@ def prediction(source_file, output_file=PREDICTION_OUTPUT_CSV):
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0')
+    app.run(debug=True, host='0.0.0.0', port=5001)
