@@ -30,9 +30,8 @@ def main():
     for opt,arg in opts:
         if opt == "--url":
             URL = arg
-        if opt == "--input_file":
+        elif opt == "--input_file":
             filename = arg
-
         else:
             print("Unknown options:" + opt)
 

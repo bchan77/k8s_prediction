@@ -6,3 +6,6 @@ Build Instruction
 
 Run how run the container
 - "docker run -p 5000:5000 k8s_prediction"
+
+How to run the test program
+python client_test.py --url http://localhost:5000 --input_file 10kDiabetes.csv
