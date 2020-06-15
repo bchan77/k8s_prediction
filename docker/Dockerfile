@@ -1,5 +1,4 @@
-#python 3.8 doesn't work, it has to be python 3.7 or below.
-FROM python:3.7
+FROM centos7.7.1908
 
 
 #Create a list of directory
