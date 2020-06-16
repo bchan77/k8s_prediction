@@ -1,13 +1,21 @@
 FROM centos/python-36-centos7:latest
 
 #Setting the datarobot working directory
-ENV DR_WORING_DIR=/tmp/datarobot
-ENV DR_AGENT_DIR=${DR_WORING_DIR}/agent
-ENV DR_WEB_DIR=${DR_WORING_DIR}/web
+ARG DR_WORING_DIR=/tmp/datarobot
+ARG DR_AGENT_DIR=${DR_WORING_DIR}/agent
+ARG DR_WEB_DIR=${DR_WORING_DIR}/web
 
 #Get the passing variable
-ENV mlopsURL=$mlopsURL
-ENV apiToken=$apiToken
+ARG mlopsURL=$mlopsURL
+ARG apiToken=$apiToken
+
+#Will fix this later. For demo purpose, hard code below 2 values
+#ENV MLOPS_DEPLOYMENT_ID=$MLOPS_DEPLOYMENT_ID
+#ENV MLOPS_MODEL_ID=$MLOPS_MODEL_ID
+ENV MLOPS_DEPLOYMENT_ID=5ee3e89b4e4920003f064fe0
+ENV MLOPS_MODEL_ID=5ee3e89b4e4920003f064fde
+
+#Getting Deployment ID
 
 #Create a list of directory
 RUN mkdir -p ${DR_WORING_DIR}
@@ -41,19 +49,23 @@ COPY lib/datarobot-mlops-*.tar.gz ${DR_WORING_DIR}
 #Now installing Agent and start the agent
 RUN tar xzvf datarobot-mlops-*.tar.gz -C  ${DR_AGENT_DIR}
 RUN mv ${DR_AGENT_DIR}/datarobot-mlops* ${DR_AGENT_DIR}/datarobot-mlops
+#Install the MLOps python package as this is an example of using python
+RUN pip install ${DR_AGENT_DIR}/datarobot-mlops/lib/*.whl
+
 
 #update the datarobot host. Update https to http and also its
-RUN sed "s|https://<DATAROBOT_HOST>|http://${mlopsURL}|g" ${DR_AGENT_DIR}/datarobot-mlops/conf/mlops.agent.conf.yaml
+RUN sed -i "s|https://<DATAROBOT_HOST>|http://${mlopsURL}|g" ${DR_AGENT_DIR}/datarobot-mlops/conf/mlops.agent.conf.yaml
 
 #Update the APIToken
-RUN chmod +x ${DR_AGENT_DIR}/datarobot-mlops/bin/run-agent-once.sh
-RUN sed "s/FILL_IN_HERE/${apiToken}/g" ${DR_AGENT_DIR}/datarobot-mlops/conf/mlops.agent.conf.yaml
+RUN chmod +x ${DR_AGENT_DIR}/datarobot-mlops/bin/start-agent.sh
+RUN mkdir /tmp/ta
+RUN chmod 777 /tmp/ta
+RUN sed -i "s/FILL_IN_HERE/${apiToken}/g" ${DR_AGENT_DIR}/datarobot-mlops/conf/mlops.agent.conf.yaml
 
 
 #Kick of the agent
 
-CMD ["${DR_AGENT_DIR}/datarobot-mlops/datarobot-mlops/bin/run-agent-once.sh"]
-
 
 EXPOSE 5000
-CMD ["python", "/tmp/datarobot/web/main.py"]
+CMD /tmp/datarobot/agent/datarobot-mlops/bin/start-agent.sh ; python /tmp/datarobot/web/main.py
+

@@ -38,7 +38,12 @@ def post_file():
 
     #Save the file as YYYYMMDD
     #filename = UPLOAD_DIR + time.strftime("%Y%m%d-%H%M%S") + "_" + file.filename
-    filename = UPLOAD_DIR + time.strftime("%Y%m%d-%H%M%S") + "_upload.csv"
+
+
+    #filename = UPLOAD_DIR + time.strftime("%Y%m%d-%H%M%S") + "_upload.csv"
+    #Demo here
+    filename = '/tmp/datarobot/agent/datarobot-mlops/examples/data/surgical-dataset.csv'
+
 
     app.logger.info("Saving the file to: " + filename)
     with open(filename, 'w') as f:
@@ -46,14 +51,23 @@ def post_file():
     app.logger.info("Done with writing the file.")
 
     app.logger.info("Running Prediction")
-    PREDICTION_OUTPUT_CSV = UPLOAD_DIR + time.strftime("%Y%m%d-%H%M%S") + "_pred.csv"
-    app.logger.info("Prediction Output file: " + PREDICTION_OUTPUT_CSV)
-    prediction(filename,PREDICTION_OUTPUT_CSV)
+
+    #PREDICTION_OUTPUT_CSV = UPLOAD_DIR + time.strftime("%Y%m%d-%H%M%S") + "_pred.csv"
+    #app.logger.info("Prediction Output file: " + PREDICTION_OUTPUT_CSV)
+    #prediction(filename,PREDICTION_OUTPUT_CSV)
+
+    #Demo purpose only
+    os.system('cd /tmp/datarobot/agent/datarobot-mlops/examples/python/BinaryClassificationExample/; ./run_example.sh')
+
     app.logger.info("Done running prediction")
 
     #Coverting CSV output to json
     app.logger.info("Converting CSV to JSON")
-    df = pd.read_csv(PREDICTION_OUTPUT_CSV)
+    #df = pd.read_csv(PREDICTION_OUTPUT_CSV)
+
+    #Demo purpose only
+    df = pd.read_csv('/tmp/datarobot/agent/datarobot-mlops/examples/python/BinaryClassificationExample/actuals.csv')
+
     prediction_json = df.to_json()
     app.logger.info("Done JSON Converting")
 
@@ -66,8 +80,9 @@ def post_file():
 
     #Lets do some cleanup
     #Remove downloaded file
-    os.remove(filename)
-    os.remove(PREDICTION_OUTPUT_CSV)
+    #Put this back in after the demo
+    #os.remove(filename)
+    #os.remove(PREDICTION_OUTPUT_CSV)
 
 
     return response
