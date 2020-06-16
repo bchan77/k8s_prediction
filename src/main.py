@@ -9,7 +9,7 @@ import os
 
 app = Flask(__name__)
 
-UPLOAD_DIR = "/app/uploads/"
+UPLOAD_DIR = "/tmp/datarobot/uploads/"
 #Overwrite it for local testing
 #UPLOAD_DIR = "/Users/billy/Downloads/"
 
