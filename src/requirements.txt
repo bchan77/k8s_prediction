@@ -2,4 +2,4 @@ flask==1.1.2
 #request
 pandas==1.0.3
 numexpr==2.7.1
-numpy==1.18.2
+numpy==1.22.0
